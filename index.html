@@ -136,6 +136,49 @@ body {
 
 
 /* =====================================================
+   LAYOUT (desktop: side-by-side, mobile: stacked)
+===================================================== */
+
+.layout {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 16px;
+
+}
+
+
+.main-col,
+.side-col {
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-width: 0;
+
+}
+
+
+.side-col {
+
+    gap: 16px;
+
+}
+
+
+.side-col > .register,
+.side-col > .settings,
+.side-col > .registered {
+
+    margin-top: 0;
+
+}
+
+
+/* =====================================================
    HEADER
 ===================================================== */
 
@@ -1108,12 +1151,104 @@ footer .credit {
 }
 
 
+/*
+ * Tablet / small desktop:
+ * more breathing room, still single column layout,
+ * but wider cards and multi-column people/results grids.
+ */
+
 @media(min-width:601px) {
 
     body {
 
         padding-left: 24px;
         padding-right: 24px;
+
+    }
+
+}
+
+
+/*
+ * Desktop:
+ * split into a main column (camera/stage) and a
+ * side column (register, settings, registered people)
+ * so the wide viewport is used for parallel content
+ * instead of one long stacked page.
+ */
+
+@media(min-width:960px) {
+
+    .container {
+
+        max-width: 1180px;
+
+    }
+
+
+    .layout {
+
+        flex-direction: row;
+
+        align-items: flex-start;
+
+        gap: 24px;
+
+    }
+
+
+    .main-col {
+
+        flex: 1.35;
+
+    }
+
+
+    .side-col {
+
+        flex: 1;
+
+        max-width: 420px;
+
+        position: sticky;
+
+        top: 20px;
+
+    }
+
+
+    .register,
+    .settings,
+    .registered {
+
+        margin-top: 0;
+
+    }
+
+
+    .results {
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+    }
+
+
+    h1 {
+
+        font-size: 30px;
+
+    }
+
+}
+
+
+@media(min-width:1280px) {
+
+    .results {
+
+        grid-template-columns:
+            repeat(4, 1fr);
 
     }
 
@@ -1158,6 +1293,12 @@ footer .credit {
     </div>
 
 </header>
+
+
+<div class="layout">
+
+
+<div class="main-col">
 
 
 <!-- =====================================================
@@ -1310,6 +1451,13 @@ footer .credit {
 </div>
 
 
+</div>
+<!-- /main-col -->
+
+
+<div class="side-col">
+
+
 <!-- =====================================================
      REGISTER
 ===================================================== -->
@@ -1434,6 +1582,14 @@ footer .credit {
     </div>
 
 </div>
+
+
+</div>
+<!-- /side-col -->
+
+
+</div>
+<!-- /layout -->
 
 
 <!-- =====================================================
