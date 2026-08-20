@@ -169,9 +169,8 @@ body {
 }
 
 
-.side-col > .register,
-.side-col > .settings,
-.side-col > .registered {
+.side-col > .tabs-card,
+.side-col > .settings {
 
     margin-top: 0;
 
@@ -277,9 +276,8 @@ h1 span {
 ===================================================== */
 
 .stage,
-.register,
+.tabs-card,
 .settings,
-.registered,
 .results,
 #error {
 
@@ -625,27 +623,125 @@ button.active {
 
 
 /* =====================================================
-   REGISTER
+   TABS CARD (Register / Registered People)
 ===================================================== */
 
-.register {
+.tabs-card {
 
     margin-top: 16px;
 
-    padding: 18px;
+    padding: 6px;
 
     box-shadow: 0 1px 2px rgba(0,0,0,.04);
+
+    overflow: hidden;
 
 }
 
 
-.register h2,
-.registered h2 {
+.tabs-header {
 
-    margin: 0 0 4px;
+    display: flex;
 
-    font-size: 17px;
+    gap: 4px;
+
+    padding: 4px;
+
+    background: var(--surface-2);
+
+    border-radius: var(--radius-m);
+
+    margin-bottom: 12px;
+
+}
+
+
+.tab-btn {
+
+    flex: 1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    background: transparent;
+
+    color: var(--muted);
+
+    padding: 10px 10px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    border-radius: calc(var(--radius-m) - 4px);
+
+    box-shadow: none;
+
+    white-space: nowrap;
+
+}
+
+
+.tab-btn.active {
+
+    background: var(--surface);
+
+    color: var(--text);
+
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+
+}
+
+
+.tab-badge {
+
+    min-width: 18px;
+
+    height: 18px;
+
+    padding: 0 5px;
+
+    border-radius: 999px;
+
+    background: var(--muted-2);
+
+    color: var(--text);
+
+    font-size: 10px;
     font-weight: 700;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.tab-btn.active .tab-badge {
+
+    background: var(--accent);
+
+    color: #fff;
+
+}
+
+
+.tab-panel {
+
+    padding: 10px 12px 14px;
+
+}
+
+
+.tab-panel[hidden] {
+
+    display: none;
 
 }
 
@@ -794,17 +890,6 @@ button.active {
 /* =====================================================
    REGISTERED PEOPLE
 ===================================================== */
-
-.registered {
-
-    margin-top: 16px;
-
-    padding: 18px;
-
-    box-shadow: 0 1px 2px rgba(0,0,0,.04);
-
-}
-
 
 .people-list {
 
@@ -1217,9 +1302,8 @@ footer .credit {
     }
 
 
-    .register,
-    .settings,
-    .registered {
+    .tabs-card,
+    .settings {
 
         margin-top: 0;
 
@@ -1459,46 +1543,94 @@ footer .credit {
 
 
 <!-- =====================================================
-     REGISTER
+     TABS: REGISTER / REGISTERED PEOPLE
 ===================================================== -->
 
-<div class="register">
+<div class="tabs-card">
 
-    <h2>
-        Register a Person
-    </h2>
+    <div
+        class="tabs-header"
+        role="tablist">
 
+        <button
+            type="button"
+            class="tab-btn active"
+            data-tab="register"
+            role="tab">
 
-    <p class="register-description">
+            Register Face
 
-        Register a clear face photo.
-        Only the face descriptor is stored
-        on this device.
-
-    </p>
-
-
-    <div class="register-controls">
-
-        <input
-            id="personName"
-            type="text"
-            placeholder="Person name">
+        </button>
 
 
-        <label
-            for="registerInput"
-            class="upload-button">
+        <button
+            type="button"
+            class="tab-btn"
+            data-tab="people"
+            role="tab">
 
-            Choose Face Photo
+            Registered People
 
-        </label>
+            <span
+                id="peopleCountBadge"
+                class="tab-badge">
+                0
+            </span>
+
+        </button>
+
+    </div>
 
 
-        <input
-            id="registerInput"
-            type="file"
-            accept="image/*">
+    <div
+        class="tab-panel"
+        data-panel="register">
+
+        <p class="register-description">
+
+            Register a clear face photo.
+            Only the face descriptor is stored
+            on this device.
+
+        </p>
+
+
+        <div class="register-controls">
+
+            <input
+                id="personName"
+                type="text"
+                placeholder="Person name">
+
+
+            <label
+                for="registerInput"
+                class="upload-button">
+
+                Choose Face Photo
+
+            </label>
+
+
+            <input
+                id="registerInput"
+                type="file"
+                accept="image/*">
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="tab-panel"
+        data-panel="people"
+        hidden>
+
+        <div
+            id="peopleList"
+            class="people-list">
+        </div>
 
     </div>
 
@@ -1561,25 +1693,6 @@ footer .credit {
         </span>
 
     </label>
-
-</div>
-
-
-<!-- =====================================================
-     REGISTERED PEOPLE
-===================================================== -->
-
-<div class="registered">
-
-    <h2>
-        Registered People
-    </h2>
-
-
-    <div
-        id="peopleList"
-        class="people-list">
-    </div>
 
 </div>
 
@@ -4384,9 +4497,93 @@ console.log(
 
 console.log(
     "================================"
+
 );
+
+</script>
+
+
+
+<script>
+
+"use strict";
+
+/* =====================================================
+   TABS: REGISTER / REGISTERED PEOPLE
+   (independent of the recognition engine above)
+===================================================== */
+
+(function () {
+
+    const tabButtons =
+        document.querySelectorAll(".tab-btn");
+
+    const tabPanels =
+        document.querySelectorAll(".tab-panel");
+
+    tabButtons.forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+            const target =
+                btn.dataset.tab;
+
+            tabButtons.forEach(b =>
+                b.classList.toggle(
+                    "active",
+                    b === btn
+                )
+            );
+
+            tabPanels.forEach(panel => {
+
+                panel.hidden =
+                    panel.dataset.panel !== target;
+
+            });
+
+        });
+
+    });
+
+
+    /*
+     * Keep the "Registered People" tab badge in sync
+     * with the people list, without touching the
+     * original rendering logic.
+     */
+
+    const peopleList =
+        document.getElementById("peopleList");
+
+    const badge =
+        document.getElementById("peopleCountBadge");
+
+    if (peopleList && badge) {
+
+        const updateBadge = () => {
+
+            const count =
+                peopleList.querySelectorAll(
+                    ".person-name"
+                ).length;
+
+            badge.textContent =
+                String(count);
+
+        };
+
+        updateBadge();
+
+        new MutationObserver(updateBadge)
+            .observe(peopleList, { childList: true, subtree: true });
+
+    }
+
+})();
 
 </script>
 
 </body>
 
+</html>
