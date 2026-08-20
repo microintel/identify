@@ -166,6 +166,8 @@ body {
 
     gap: 16px;
 
+    order: -1;
+
 }
 
 
@@ -643,6 +645,71 @@ button.active {
 }
 
 
+.tabs-card-header {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    background: transparent;
+
+    box-shadow: none;
+
+    padding: 10px 12px;
+
+    color: var(--text);
+
+}
+
+
+.tabs-card-title {
+
+    font-size: 15px;
+    font-weight: 700;
+
+}
+
+
+.chevron-icon {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: var(--muted);
+
+    transition: transform .15s ease;
+
+}
+
+
+.tabs-card-header.collapsed .chevron-icon {
+
+    transform: rotate(-90deg);
+
+}
+
+
+.tabs-card-body {
+
+    padding-top: 2px;
+
+}
+
+
+.tabs-card-body[hidden] {
+
+    display: none;
+
+}
+
+
 .tabs-header {
 
     display: flex;
@@ -744,6 +811,86 @@ button.active {
 
 
 .tab-panel[hidden] {
+
+    display: none;
+
+}
+
+
+.add-person-trigger {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    background: var(--accent-soft);
+
+    color: var(--accent);
+
+    padding: 12px 14px;
+
+    border-radius: var(--radius-m);
+
+    font-size: 14px;
+    font-weight: 700;
+
+    box-shadow: none;
+
+}
+
+
+.add-person-trigger.open {
+
+    background: var(--surface-2);
+
+    color: var(--muted);
+
+}
+
+
+.add-person-icon {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 18px;
+
+    height: 18px;
+
+    line-height: 1;
+
+    font-size: 15px;
+    font-weight: 800;
+
+    transition: transform .15s ease;
+
+}
+
+
+.add-person-trigger.open .add-person-icon {
+
+    transform: rotate(45deg);
+
+}
+
+
+.register-form {
+
+    margin-top: 12px;
+
+}
+
+
+.register-form[hidden] {
 
     display: none;
 
@@ -1017,6 +1164,8 @@ button.active {
 
     background: transparent;
 
+    contain: layout;
+
 }
 
 
@@ -1029,6 +1178,8 @@ button.active {
     padding: 16px;
 
     box-shadow: 0 1px 2px rgba(0,0,0,.04);
+
+    contain: content;
 
 }
 
@@ -1329,12 +1480,16 @@ footer .credit {
 
         flex: 1.35;
 
+        order: 0;
+
     }
 
 
     .side-col {
 
         flex: 1;
+
+        order: 0;
 
         max-width: 420px;
 
@@ -1591,6 +1746,33 @@ footer .credit {
 
 <div class="tabs-card">
 
+    <button
+        type="button"
+        id="peopleSectionToggle"
+        class="tabs-card-header">
+
+        <span class="tabs-card-title">
+
+            People
+
+        </span>
+
+
+        <span class="chevron-icon">
+
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+
+        </span>
+
+    </button>
+
+
+    <div
+        id="peopleSectionBody"
+        class="tabs-card-body">
+
     <div
         class="tabs-header"
         role="tablist">
@@ -1629,36 +1811,55 @@ footer .credit {
         class="tab-panel"
         data-panel="register">
 
-        <p class="register-description">
+        <button
+            type="button"
+            id="addPersonToggle"
+            class="add-person-trigger">
 
-            Register a clear face photo.
-            Only the face descriptor is stored
-            on this device.
+            <span class="add-person-icon">+</span>
 
-        </p>
+            Add New Person
 
-
-        <div class="register-controls">
-
-            <input
-                id="personName"
-                type="text"
-                placeholder="Person name">
+        </button>
 
 
-            <label
-                for="registerInput"
-                class="upload-button">
+        <div
+            id="registerForm"
+            class="register-form"
+            hidden>
 
-                Choose Face Photo
+            <p class="register-description">
 
-            </label>
+                Register a clear face photo.
+                Only the face descriptor is stored
+                on this device.
+
+            </p>
 
 
-            <input
-                id="registerInput"
-                type="file"
-                accept="image/*">
+            <div class="register-controls">
+
+                <input
+                    id="personName"
+                    type="text"
+                    placeholder="Person name">
+
+
+                <label
+                    for="registerInput"
+                    class="upload-button">
+
+                    Choose Face Photo
+
+                </label>
+
+
+                <input
+                    id="registerInput"
+                    type="file"
+                    accept="image/*">
+
+            </div>
 
         </div>
 
@@ -1676,6 +1877,9 @@ footer .credit {
         </div>
 
     </div>
+
+    </div>
+    <!-- /tabs-card-body -->
 
 </div>
 
@@ -1765,17 +1969,6 @@ footer .credit {
 ===================================================== -->
 
 <div class="readout">
-
-    <span>
-
-        Detector:
-
-        <b>
-            SSD MobileNet V1
-        </b>
-
-    </span>
-
 
     <span>
 
@@ -2350,7 +2543,7 @@ async function loadModels() {
 
 
     hint.textContent =
-        "Loading SSD MobileNet V1...";
+        "Loading face detector...";
 
 
     await faceapi.nets
@@ -3204,8 +3397,18 @@ function processDetections(
     }
 
 
-    results.innerHTML =
-        "";
+    /*
+     * PERFORMANCE:
+     *
+     * Build all face cards off-screen in a
+     * DocumentFragment first, then attach them in a
+     * single operation. This avoids one forced reflow
+     * per detected face, per frame, which matters a
+     * lot once several faces are on screen at once.
+     */
+
+    const resultsFragment =
+        document.createDocumentFragment();
 
 
     let recognized =
@@ -3245,7 +3448,7 @@ function processDetections(
             );
 
 
-            results.appendChild(
+            resultsFragment.appendChild(
                 createFaceCard(
                     result,
                     index,
@@ -3254,6 +3457,14 @@ function processDetections(
             );
 
         }
+    );
+
+
+    results.innerHTML =
+        "";
+
+    results.appendChild(
+        resultsFragment
     );
 
 
@@ -3399,6 +3610,55 @@ async function detectionLoop() {
         !running ||
         mode !== "camera"
     ) {
+
+        return;
+
+    }
+
+
+    /*
+     * PERFORMANCE:
+     *
+     * Don't run detection while the tab/window is
+     * hidden (e.g. user switched apps or tabs). This
+     * avoids burning CPU/battery on invisible frames.
+     * Detection resumes automatically once the page
+     * becomes visible again.
+     */
+
+    if (
+        document.hidden
+    ) {
+
+        document.addEventListener(
+            "visibilitychange",
+            function resumeOnVisible() {
+
+                if (
+                    !document.hidden
+                ) {
+
+                    document.removeEventListener(
+                        "visibilitychange",
+                        resumeOnVisible
+                    );
+
+
+                    if (
+                        running &&
+                        mode === "camera"
+                    ) {
+
+                        requestAnimationFrame(
+                            detectionLoop
+                        );
+
+                    }
+
+                }
+
+            }
+        );
 
         return;
 
@@ -3951,6 +4211,16 @@ registerInput.addEventListener(
                 `${name} registered`,
                 true
             );
+
+
+            if (
+                typeof window.collapseRegisterForm ===
+                    "function"
+            ) {
+
+                window.collapseRegisterForm();
+
+            }
 
 
             alert(
@@ -4632,6 +4902,123 @@ console.log(
 
         new MutationObserver(updateBadge)
             .observe(peopleList, { childList: true, subtree: true });
+
+    }
+
+
+    /*
+     * "+ Add New Person" toggle.
+     *
+     * The registration form only appears once the
+     * user actually wants to register someone, instead
+     * of always taking up space on screen.
+     */
+
+    const addPersonToggle =
+        document.getElementById("addPersonToggle");
+
+    const registerForm =
+        document.getElementById("registerForm");
+
+    function collapseRegisterForm() {
+
+        if (!registerForm || !addPersonToggle) {
+            return;
+        }
+
+        registerForm.hidden =
+            true;
+
+        addPersonToggle.classList.remove(
+            "open"
+        );
+
+        addPersonToggle.innerHTML =
+            '<span class="add-person-icon">+</span>Add New Person';
+
+    }
+
+    function expandRegisterForm() {
+
+        if (!registerForm || !addPersonToggle) {
+            return;
+        }
+
+        registerForm.hidden =
+            false;
+
+        addPersonToggle.classList.add(
+            "open"
+        );
+
+        addPersonToggle.innerHTML =
+            '<span class="add-person-icon">+</span>Cancel';
+
+    }
+
+    if (addPersonToggle && registerForm) {
+
+        addPersonToggle.addEventListener(
+            "click",
+            () => {
+
+                if (registerForm.hidden) {
+
+                    expandRegisterForm();
+
+                }
+                else {
+
+                    collapseRegisterForm();
+
+                }
+
+            }
+        );
+
+    }
+
+    /*
+     * Exposed so the main registration success handler
+     * can collapse the form back down automatically.
+     */
+
+    window.collapseRegisterForm =
+        collapseRegisterForm;
+
+
+    /*
+     * Whole-card toggle: hides/shows the entire
+     * Register + Registered People card (both tabs)
+     * so it doesn't have to take up screen space
+     * when the user isn't managing people.
+     */
+
+    const peopleSectionToggle =
+        document.getElementById("peopleSectionToggle");
+
+    const peopleSectionBody =
+        document.getElementById("peopleSectionBody");
+
+    if (peopleSectionToggle && peopleSectionBody) {
+
+        peopleSectionToggle.addEventListener(
+            "click",
+            () => {
+
+                const isHidden =
+                    peopleSectionBody.hidden;
+
+                peopleSectionBody.hidden =
+                    !isHidden;
+
+                peopleSectionToggle.classList.toggle(
+                    "collapsed",
+                    !isHidden
+                );
+
+            }
+        );
 
     }
 
