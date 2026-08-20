@@ -424,6 +424,8 @@ button.active {
 
     aspect-ratio: 4 / 3;
 
+    max-height: 62vh;
+
     background: #0b0b0c;
 
     overflow: hidden;
@@ -479,6 +481,8 @@ button.active {
 #overlay {
 
     pointer-events: none;
+
+    object-fit: contain;
 
 }
 
@@ -840,14 +844,14 @@ button.active {
 
     font-size: 14px;
 
-    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
 
 }
 
 
-.setting:last-child {
+.setting:first-child {
 
-    border-bottom: none;
+    border-top: none;
 
 }
 
@@ -912,11 +916,11 @@ button.active {
 
     border-radius: var(--radius-m);
 
-    padding: 12px 14px;
+    padding: 8px 10px 8px 8px;
 
     display: flex;
 
-    justify-content: space-between;
+    justify-content: flex-start;
 
     align-items: center;
 
@@ -925,7 +929,46 @@ button.active {
 }
 
 
+.person-avatar {
+
+    width: 38px;
+
+    height: 38px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    flex-shrink: 0;
+
+    background: var(--muted-2);
+
+}
+
+
+.person-avatar-fallback {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #fff;
+
+    background: var(--accent);
+
+    font-size: 15px;
+    font-weight: 700;
+
+}
+
+
 .person-name {
+
+    flex: 1;
+
+    min-width: 0;
 
     font-size: 14px;
     font-weight: 600;
@@ -1668,7 +1711,9 @@ footer .credit {
     </label>
 
 
-    <label class="setting">
+    <label
+        class="setting"
+        style="display:none;">
 
         Recognition threshold
 
@@ -3309,11 +3354,11 @@ async function openCamera() {
 
 
     /*
-     * Match stage aspect ratio.
+     * Stage size stays fixed (see CSS) so the page
+     * never reflows/scrolls when camera resolution
+     * varies. The video is letterboxed via
+     * object-fit: contain instead.
      */
-
-    stage.style.aspectRatio =
-        `${video.videoWidth} / ${video.videoHeight}`;
 
 
     video.style.display =
@@ -3626,15 +3671,13 @@ fileInput.addEventListener(
                     async () => {
 
                         /*
-                         * IMPORTANT:
-                         *
-                         * Make the stage have the
-                         * exact same aspect ratio
-                         * as the image.
+                         * Stage size stays fixed (see CSS)
+                         * so the page never reflows/scrolls
+                         * for differently-sized images. The
+                         * image and overlay both letterbox
+                         * via object-fit: contain, so they
+                         * stay aligned inside the fixed box.
                          */
-
-                        stage.style.aspectRatio =
-                            `${image.naturalWidth} / ${image.naturalHeight}`;
 
 
                         /*
@@ -3879,6 +3922,9 @@ registerInput.addEventListener(
                 descriptor:
                     descriptor,
 
+                photo:
+                    dataURL,
+
                 createdAt:
                     new Date()
                         .toISOString()
@@ -4047,7 +4093,16 @@ function renderRegisteredPeople() {
                 "person";
 
 
+            const avatarHTML =
+                person.photo
+                    ? `<img class="person-avatar" src="${person.photo}" alt="${escapeHTML(person.name)}">`
+                    : `<span class="person-avatar person-avatar-fallback">${escapeHTML(person.name.charAt(0).toUpperCase())}</span>`;
+
+
             item.innerHTML = `
+
+                ${avatarHTML}
+
 
                 <span class="person-name">
 
